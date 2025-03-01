@@ -1,0 +1,29 @@
+# PERSONALIZZARE NOME DISPOSITIVO... ES. vacumm.x40_ultra_complete mettere solo x40_ultra_complete
+{% set name_vacum = 'x40_ultra_complete' %}
+
+##################################################################
+# Da qui in poi NON MODIFICARE
+##################################################################
+
+{% macro entity_vacum() %}
+    {{- name_vacum -}}
+{% endmacro %}
+
+{% macro dreame() %}
+    {% set rooms = state_attr('vacuum.' ~ name_vacum , 'rooms').values() | first %}
+    {
+    {% for room in rooms %}
+        "{{ room.name }}": "{{ room.id }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    }
+{% endmacro %}
+
+{% macro list_sensor_name(sensor_select, print_list_group) %}
+	{% if sensor_select == 'RESET' %}
+	{% elif sensor_select in print_list_group%}
+		{{ print_list_group | select('ne', sensor_select) | list }}
+	{% else %}
+		{% set ns = namespace(entities=print_list_group | select('ne',sensor_select) | list) %}
+		{{ ns.entities + [sensor_select] }}
+	{% endif %}
+{% endmacro %}

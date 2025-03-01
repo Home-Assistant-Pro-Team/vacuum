@@ -1,0 +1,203 @@
+template:
+  - select:
+      - name: "Aggiungi o rimuovi stanza per prossimo lavaggio"
+        state: >-
+          {% from 'dreame.jinja' import entity_vacum %}
+          {{ states('sensor.' ~ entity_vacum() ~ '_status') }}"
+        options: >-
+          {% from 'dreame.jinja' import dreame %}
+          {{ (dreame()|from_json).keys()|list + ['RESET'] }}
+        select_option:
+          - event: customizations
+            event_data:
+              types: dreame_rooms
+              rooms_select: "{{ option }}"
+
+  - trigger:
+      - platform: event
+        event_type: customizations
+        event_data:
+          types: dreame_rooms
+    sensor:
+      - name: Lista stanze da pulire
+        state: "{{ trigger.event.data.rooms_select }}"
+        attributes:
+          print_list_group: >-
+            {% from 'dreame.jinja' import dreame %}
+            {% set state_attra = state_attr('sensor.lista_stanze_da_pulire', 'print_list_group')  %}
+            {% if trigger.event.data.rooms_select == 'RESET' %}
+            {% else %}
+              {% set id_rooms = (dreame()|from_json).get(trigger.event.data.rooms_select, 888 ) %}          
+              {{ state_attra|list | select('ne', id_rooms)|list if id_rooms in state_attra else state_attra|list + id_rooms|list }}
+            {% endif %}
+          print_list_name: >-
+            {% from 'dreame.jinja' import list_sensor_name %}
+            {{ list_sensor_name(trigger.event.data.rooms_select, this.attributes.print_list_name) }}
+
+input_boolean:
+  robottino:
+    name: Robottino
+  mode_clean:
+    name: Modalità pulizia alexa
+
+automation:
+  - alias: "Elettrodomestici: lavaggio dreame con alexa"
+    id: "conferma_alexa_dreame"
+    mode: parallel
+    trigger:
+      - platform: state
+        entity_id: input_boolean.robottino
+        from: "off"
+        to: "on"
+    condition:
+      - "{{ states('script.activate_alexa_actionable_notification') != 'unknown' }}"
+    action:
+      - alias: Metti boolean in off
+        action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.robottino
+
+      - alias: Aggiorna alexa
+        action: alexa_media.update_last_called
+
+      - variables:
+          entity_vacum: >-
+            {% from 'dreame.jinja' import entity_vacum %}
+            {{ entity_vacum() }}
+          alexa: "{{ states.media_player | selectattr('attributes.last_called', 'eq', true) | map(attribute='entity_id') | select('in', integration_entities('alexa_media')) | first }}"
+
+      - alias: >-
+          IF: robot non sta pulendo
+          THEN: avvisa che robot gia in funzione
+          ELSE: esegui pulizia
+        if: "{{ not is_state('sensor.' ~ entity_vacum ~ '_cleaning_progress', 'unavailable') }}"
+        then:
+          - alias: Invia notifica ad Alexa
+            action: notify.alexa_media
+            data:
+              target: "{{ alexa }}"
+              data:
+                method: spoken
+              message: "Non è possibile avviare la pulizia perchè robot già in funzione"
+        else:
+          - alias: Attiva prima domanda alexa per stanze
+            action: script.activate_alexa_actionable_notification
+            data:
+              text: "Dove vuoi passare il robot?"
+              event_id: rooms_vacuum
+              alexa_device: "{{ alexa }}"
+
+          - alias: Attendi risposta ad alexa
+            wait_for_trigger:
+              - platform: event
+                event_type: alexa_actionable_notification
+                event_data:
+                  event_id: rooms_vacuum
+          - alias: Cancella vecchie stanze da sensore lista stanze
+            action: select.select_option
+            target:
+              entity_id: select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio
+            data:
+              option: RESET
+          - alias: Aggiungi le stanze al sensore lista stanze
+            repeat:
+              for_each: >-
+                {{ (wait.trigger.event.data.event_response | regex_replace(' (in|e|con|oppure|anche|la|lo|il|le|nella|alle|alla) ', ' ') | replace(' ', ',')).split(',') }}
+              sequence:
+                - alias: Controlla che le parole siano le stanze
+                  if: "{{ repeat.item | capitalize in state_attr('select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio','options') }}"
+                  then:
+                    - action: select.select_option
+                      target:
+                        entity_id: select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio
+                      data:
+                        option: "{{ repeat.item | capitalize }}"
+                    - delay:
+                        milliseconds: 250
+          - alias: >-
+              IF: sensore abbia almeno una stanza impostata
+              THEN: continua automazione per pulizia
+              ELSE: avvisa di errore in compilazione
+
+            if:
+              - "{{states('sensor.lista_stanze_da_pulire') in state_attr('select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio','options') }}"
+              - "{{ states('sensor.lista_stanze_da_pulire')  != 'RESET' }}"
+            then:
+              - alias: >-
+                  IF: se boolean in on
+                  THEN: Chiedi in che modalità puilire (solo aspirazione o lavaggio completo)
+                  ELSE: Avvia lavaggio con modalita impostata da app dreame
+                if:
+                  - "{{ is_state('input_boolean.mode_clean', 'on' )}}"
+                then:
+                  - alias: Attiva seconda domanda alexa per modalità pulizia
+                    action: script.activate_alexa_actionable_notification
+                    data:
+                      text: "In che modalità? Solo aspirazione o pulizia completa?"
+                      event_id: rooms_vacuum
+                      alexa_device: "{{ alexa }}"
+                  - alias: Attendi risposta da alexa
+                    wait_for_trigger:
+                      - platform: event
+                        event_type: alexa_actionable_notification
+                        event_data:
+                          event_id: rooms_vacuum
+                  - alias: >-
+                      IF: Se nella risposta è presente almeno una parola tra solo aspirazione
+                      THEN: Imposta su solo aspirazioen
+                      ELSE: abilita cleangenius
+                    if: "{{ 'aspirazione' in wait.trigger.event.data.event_response.split() | lower or 'solo' in wait.trigger.event.data.event_response.split() | lower }}"
+                    then:
+                      - alias: >-
+                          IF: Se cleangenius spento 
+                          THEN: imposta solo pulizia
+                          ELSE: Spegni cleangenius ed imposta solo pulizia
+                        if: "{{ is_state('select.' ~ entity_vacum ~ '_cleangenius', 'off') }}"
+                        then:
+                          - action: select.select_option
+                            target:
+                              entity_id: "{{'select.' ~ entity_vacum ~ '_cleaning_mode'}}"
+                            data:
+                              option: "sweeping"
+                        else:
+                          - action: select.select_option
+                            target:
+                              entity_id: "{{'select.' ~ entity_vacum ~ '_cleangenius'}}"
+                            data:
+                              option: "off"
+                          - delay: "00:00:03"
+                          - action: select.select_option
+                            target:
+                              entity_id: "{{'select.' ~ entity_vacum ~ '_cleaning_mode'}}"
+                            data:
+                              option: "sweeping"
+                    else:
+                      - action: select.select_option
+                        target:
+                          entity_id: "{{'select.' ~ entity_vacum ~ '_cleangenius'}}"
+                        data:
+                          option: "routine_cleaning"
+                  - alias: >-
+                      Push: solo persone che si trovano in casa altrimenti tutti
+                    event: elettrodomestici
+                    event_data:
+                      push: "true"
+                      tag: "dreame"
+                      title: "Inizio lavaggio dreame"
+                      message: >-
+                        Inizio a pulire {{state_attr('sensor.lista_stanze_da_pulire', 'print_list_name') | join(', ') }}
+                      notification_icon: "mdi:robot-vacuum"
+              - alias: Avvia pulizia robot
+                action: dreame_vacuum.vacuum_clean_segment
+                data:
+                  segments: "{{ state_attr('sensor.lista_stanze_da_pulire', 'print_list_group') }}"
+                target:
+                  entity_id: "{{ 'vacuum.' ~ entity_vacum }}"
+            else:
+              - alias: Invia notifica ad Alexa
+                action: notify.alexa_media
+                data:
+                  target: "{{ alexa }}"
+                  data:
+                    method: spoken
+                  message: "Non è possibile avviare la pulizia per errore in automazione"
