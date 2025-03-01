@@ -1,3 +1,8 @@
+########################################################
+# bisogna aggiungere input_boolean.robottino ad alexa 
+# poi basterà dire di accendere/avviare robot o robottino 
+########################################################
+
 template:
   - select:
       - name: "Aggiungi o rimuovi stanza per prossimo lavaggio"
