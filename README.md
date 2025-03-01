@@ -59,13 +59,13 @@ Solo nel caso si vogliano usare utilizzare le chiamate voip è necessario compli
   {% set name_vacum = 'x40_ultra_complete' %}
   ```
 
-##### 2. Packages
+### 2. Packages
 
 - Copia la cartella "elettrodomestici" e incollala all'interno della directory "packages", se già presente copia al suo interno il file dreame.yaml
 - Riavvia il sistema.
 
 
-##### 3. Creazione Card
+### 3. Creazione Card
 
 Per creare la card, segui questi passaggi:
 
@@ -76,7 +76,7 @@ Per creare la card, segui questi passaggi:
 
 Ora dovresti visualizzare la card con tutte le informazioni sulla tua dashboard.
 
-##### 3. Aggiungi entità input_boolean.robottino ad alexa
+### 4. Aggiungi entità input_boolean.robottino ad alexa
 
 - Aggiungi l'entità input_boolean.robottino ad Alexa per renderla disponibile
 - Segui la procedura in base al metodo di integrazione che usi:
