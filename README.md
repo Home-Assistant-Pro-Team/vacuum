@@ -2,7 +2,7 @@
 
 # Gestione vacum Dreame con alexa
 
-Questo progetto sfrutta l'ottimo lavoro di [Keaton Taylor](https://github.com/keatontaylor/alexa-actions) ed è progettato per semplificare l'integrazione del tuo aspirapolvere Dreame con Alexa.
+# ANCORA IN FASE DI SVILUPPO
 
 ### **Supportaci**
 
@@ -16,21 +16,33 @@ Grazie di cuore per il tuo sostegno!
 - [Requisiti](#requisiti)
 - [Funzionalità](#funzionalità)
 - [Installazione](#installazione)
-- [Info Card](#card)
-- [Change log](#change-log)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M1MI00I)
 
 ### **Introduzione**
 
-Questo progetto ti permette di controllare il tuo aspirapolvere Dreame tramite Alexa, semplificando la gestione e l'automazione tramite Home Assistant.
+Questo progetto fornisce un package Home Assistant avanzato per controllare il tuo aspirapolvere robot Dreame con Alexa sfruttando l'ottimo lavoro di [Keaton Taylor](https://github.com/keatontaylor/alexa-actions), offrendo funzionalità di pulizia personalizzate per stanze e modalità.
 
 ### **Requisiti**
 
 - [HomeAssitant release 2025.2 ](https://www.home-assistant.io/blog/2025/02/05/release-20252/)
 - [Cartella Package abilitata](https://www.home-assistant.io/docs/configuration/packages/)
 - [Alexa Actionable Notification](https://indomus.it/progetti/home-assistant-e-le-notifiche-azionabili-di-amazon-alexa/)
+!!!!!!!!!!!!! Dreame integrato 
+|||||||||||||| stanze rinomite in italiano
+## Funzionalità
 
+* **Controllo vocale interattivo:**
+    * Avvia l'aspirapolvere con comandi vocali semplici ("Alexa, avvia il robot").
+    * Alexa ti guida nella selezione delle stanze da pulire.
+    * Opzione per scegliere la modalità di pulizia (aspirazione o aspirazione/lavaggio).
+* **Pulizia personalizzata:**
+    * Specifica una o più stanze da pulire con comandi vocali.
+    * Scegli tra modalità di pulizia: solo aspirazione o aspirazione e lavaggio.
+    * Se la modalità di pulizia non viene specificata, viene utilizzata l'ultima impostazione dall'app Dreame.
+* **Integrazione con Alexa Actionable Notifications:**
+    * Sfrutta lo script di Keaton Taylor per un'interazione vocale fluida e guidata.
+    
 ## Installazione
 
 La struttura del pacchetto è organizzata in diverse cartelle. Segui questi passaggi per completare l'installazione.

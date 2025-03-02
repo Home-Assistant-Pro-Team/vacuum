@@ -1,6 +1,6 @@
 ########################################################
-# bisogna aggiungere input_boolean.robottino ad alexa 
-# poi basterà dire di accendere/avviare robot o robottino 
+# bisogna aggiungere input_boolean.robottino ad alexa
+# poi basterà dire di accendere/avviare robot o robottino
 ########################################################
 
 template:
@@ -107,23 +107,32 @@ automation:
           - alias: Aggiungi le stanze al sensore lista stanze
             repeat:
               for_each: >-
-                {{ (wait.trigger.event.data.event_response | regex_replace(' (in|e|con|oppure|anche|la|lo|il|le|nella|alle|alla) ', ' ') | replace(' ', ',')).split(',') }}
+                {% set stanze_originali = state_attr('select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio','options') %}
+                {% set parole_alexa = (wait.trigger.event.data.event_response | lower).split() %}
+                {% set output = namespace(stanze_trovate=[], posizioni_usate=[]) %}
+                {% for indice_parola in range(parole_alexa | length) %}
+                    {% for indice_combinazione in range(parole_alexa | length, indice_parola, -1) %}
+                      {% set stanza_potenziale = parole_alexa[indice_parola:indice_combinazione] | join(' ') %}
+                      {% for stanza_originale in stanze_originali if stanza_potenziale == stanza_originale | lower %}
+                        {% set output.stanze_trovate = output.stanze_trovate + [stanza_originale] %}
+                        {% set output.posizioni_usate = output.posizioni_usate + range(indice_parola, indice_combinazione) | list %}
+                      {% endfor %}
+                      {% if output.posizioni_usate | length > 0 and (output.posizioni_usate | last) >= indice_combinazione - 1 %}{% break %}{% endif %}
+                    {% endfor %}
+                {% endfor %}
+                {{ output.stanze_trovate | unique | list }}
               sequence:
-                - alias: Controlla che le parole siano le stanze
-                  if: "{{ repeat.item | capitalize in state_attr('select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio','options') }}"
-                  then:
-                    - action: select.select_option
-                      target:
-                        entity_id: select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio
-                      data:
-                        option: "{{ repeat.item | capitalize }}"
-                    - delay:
-                        milliseconds: 250
+                - action: select.select_option
+                  target:
+                    entity_id: select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio
+                  data:
+                    option: "{{ repeat.item | capitalize }}"
+                - delay:
+                    milliseconds: 250
           - alias: >-
               IF: sensore abbia almeno una stanza impostata
               THEN: continua automazione per pulizia
               ELSE: avvisa di errore in compilazione
-
             if:
               - "{{states('sensor.lista_stanze_da_pulire') in state_attr('select.aggiungi_o_rimuovi_stanza_per_prossimo_lavaggio','options') }}"
               - "{{ states('sensor.lista_stanze_da_pulire')  != 'RESET' }}"
