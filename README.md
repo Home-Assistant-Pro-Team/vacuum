@@ -1,4 +1,4 @@
-`- Version: 0.1 -`
+`- Version: 0.2 -`
 
 # Gestione vacum Dreame con alexa
 
@@ -97,3 +97,8 @@ Ora dovresti visualizzare la card con tutte le informazioni sulla tua dashboard.
   - [Haaska](https://indomus.it/guide/integrare-gratuitamente-amazon-echo-alexa-con-home-assistant-via-haaska-e-aws/)
   - [HAMH](https://indomus.it/componenti/home-assistant-matter-hub-aka-hamh/)
 - Chiedi ad Alexa di eseguire una ricerca di nuovi dispositivi (ad esempio, dicendo: "Alexa, cerca nuovi dispositivi").
+
+## Change Log
+ - v 0.2
+     - readmi
+     - ora supporta anche stanze composte da più parole 
