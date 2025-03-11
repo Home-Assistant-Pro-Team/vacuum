@@ -153,7 +153,6 @@ automation:
     id: "conferma_alexa_dreame"
     mode: restart
     trigger:
-
       - platform: state
         entity_id:
           - input_boolean.aspirazione_robottino
@@ -174,7 +173,7 @@ automation:
           alexa: "{{ states.media_player | selectattr('attributes.last_called', 'eq', true) | map(attribute='entity_id') | select('in', integration_entities('alexa_media')) | first }}"
 
       - alias: "Se robot non sta pulendo, avvisa che già in funzione, altrimenti imposta modalità di pulizia"
-        if: "{{ not is_state('sensor.' ~ entity_vacum ~ '_cleaning_progress', 'unavailable') }}"
+        if: "{{ states('sensor.' ~ entity_vacum ~ '_cleaning_progress') in ['unavailable','unknown'] }}"
         then:
           - alias: Invia notifica ad Alexa
             action: notify.alexa_media
