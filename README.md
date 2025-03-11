@@ -1,8 +1,8 @@
-`- Version: 0.2 -`
+`- Version: 0.3 -`
 
 # Gestione vacum Dreame con alexa
 
-# ANCORA IN FASE DI SVILUPPO
+# ANCORA IN FASE DI SVILUPPO TESTATO SOLO X40
 
 ### **Supportaci**
 
@@ -28,18 +28,17 @@ Questo progetto fornisce un package Home Assistant avanzato per controllare il t
 - [HomeAssitant release 2025.2 ](https://www.home-assistant.io/blog/2025/02/05/release-20252/)
 - [Cartella Package abilitata](https://www.home-assistant.io/docs/configuration/packages/)
 - [Alexa Actionable Notification](https://indomus.it/progetti/home-assistant-e-le-notifiche-azionabili-di-amazon-alexa/)
-!!!!!!!!!!!!! Dreame integrato 
-|||||||||||||| stanze rinomite in italiano
+- [Intergrazione dream](https://github.com/Tasshack/dreame-vacuum/tree/dev)
+- Stanze nell'app Dreame rinominate in Italiano
+
 ## Funzionalità
 
 * **Controllo vocale interattivo:**
-    * Avvia l'aspirapolvere con comandi vocali semplici ("Alexa, avvia il robot").
+    * Avvia l'aspirapolvere con comandi vocali semplici ("Alexa, avvia pulizia robottino / Alexa, avvia lavaggio robottino ").
     * Alexa ti guida nella selezione delle stanze da pulire.
-    * Opzione per scegliere la modalità di pulizia (aspirazione o aspirazione/lavaggio).
 * **Pulizia personalizzata:**
     * Specifica una o più stanze da pulire con comandi vocali.
     * Scegli tra modalità di pulizia: solo aspirazione o aspirazione e lavaggio.
-    * Se la modalità di pulizia non viene specificata, viene utilizzata l'ultima impostazione dall'app Dreame.
 * **Integrazione con Alexa Actionable Notifications:**
     * Sfrutta lo script di Keaton Taylor per un'interazione vocale fluida e guidata.
     
@@ -50,18 +49,6 @@ La struttura del pacchetto è organizzata in diverse cartelle. Segui questi pass
 ### 1. **Custom template**
 
 Nel caso non sia già presente, la prima operazione da compiere è il caricamento della cartella "custom_templates" nella directory "config", o, in alternativa, l'inserimento dei singoli file al suo interno.
-
-- **personal.jinja**
-Questo file è utilizzato per altri progetti all'interno di questo repository GitHub. Nel file, impostiamo dati personali che verranno utilizzati in tutti i progetti.
-Solo nel caso si vogliano usare utilizzare le chiamate voip è necessario complilare manualmente il dizionario 'person.xx' : 'numero'.
-
-    ```bash
-    {% macro persons() %}
-    {% set numero = { 
-    'person.marco' : '33100000',
-    'person.tata' : '3340000000' 
-            } %}  
-    ```
 
 - **dreame.jinja**
 
@@ -97,8 +84,20 @@ Ora dovresti visualizzare la card con tutte le informazioni sulla tua dashboard.
   - [Haaska](https://indomus.it/guide/integrare-gratuitamente-amazon-echo-alexa-con-home-assistant-via-haaska-e-aws/)
   - [HAMH](https://indomus.it/componenti/home-assistant-matter-hub-aka-hamh/)
 - Chiedi ad Alexa di eseguire una ricerca di nuovi dispositivi (ad esempio, dicendo: "Alexa, cerca nuovi dispositivi").
+- Verifica che i nomi delle stanze siano visualizzati nella lingua corretta.
+Se non lo sono, puoi rinominarli dall'app Dreame. Ad esempio, se non ti permette di rinominare una stanza come Bagno perché il nome è già utilizzato, procedi così:
+
+  - Rinomina temporaneamente la stanza con un altro nome a tua scelta.
+  - Successivamente, rinominala di nuovo come Bagno.
+
+  In questo modo, i nomi delle stanze verranno visualizzati correttamente anche in Home Assistant. 
 
 ## Change Log
  - v 0.2
-     - readmi
-     - ora supporta anche stanze composte da più parole 
+   - readmi
+   - ora supporta anche stanze composte da più parole 
+ - v 0.3
+   - sostituita notifica push con risposta da alexa
+   - Variato intero pkg per permettere dividere direttamente lavaggio da aspirazione
+   - rimosso file person
+   - gestiti errori stato robot
