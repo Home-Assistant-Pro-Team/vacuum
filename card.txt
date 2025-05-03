@@ -1,7 +1,0 @@
-type: entities
-entities:
-  - entity: sensor.lista_stanze_da_pulire
-    type: attribute
-    attribute: print_list_name
-    name: Stanze
-  - entity: input_boolean.mode_clean

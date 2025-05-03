@@ -1,31 +1,28 @@
-`- Version: 0.3 -`
+`- Version: 1.0 -`
 
-# Gestione vacum Dreame con alexa
+# Gestione vacum Dreame con alexa multistanze
 
-# ANCORA IN FASE DI SVILUPPO TESTATO SOLO X40
+## Supportaci
 
-### **Supportaci**
-
-Se hai apprezzato questo progetto, ci piacerebbe avere il tuo supporto. Anche un semplice caffè può fare la differenza. 
-I fondi raccolti saranno utilizzati per acquistare nuovo materiale e realizzare nuovi progetti. Puoi contribuire cliccando sul pulsante qui sotto. 
+Se hai apprezzato questo progetto, ci piacerebbe avere il tuo supporto. Anche un semplice caffè può fare la differenza.
+I fondi raccolti saranno utilizzati per acquistare nuovo materiale e realizzare nuovi progetti. Puoi contribuire cliccando sul pulsante qui sotto.
 Grazie di cuore per il tuo sostegno!
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M1MI00I)
 
-### **Indice**
+## Indice
 
 - [Introduzione](#introduzione)
 - [Requisiti](#requisiti)
 - [Funzionalità](#funzionalità)
 - [Installazione](#installazione)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M1MI00I)
-
-### **Introduzione**
+## Introduzione
 
 Questo progetto fornisce un package Home Assistant avanzato per controllare il tuo aspirapolvere robot Dreame con Alexa sfruttando l'ottimo lavoro di [Keaton Taylor](https://github.com/keatontaylor/alexa-actions), offrendo funzionalità di pulizia personalizzate per stanze e modalità.
 
-### **Requisiti**
+## Requisiti
 
-- [HomeAssitant release 2025.2 ](https://www.home-assistant.io/blog/2025/02/05/release-20252/)
+- [HomeAssitant release 2025.2](https://www.home-assistant.io/blog/2025/02/05/release-20252/)
 - [Cartella Package abilitata](https://www.home-assistant.io/docs/configuration/packages/)
 - [Alexa Actionable Notification](https://indomus.it/progetti/home-assistant-e-le-notifiche-azionabili-di-amazon-alexa/)
 - [Intergrazione dream](https://github.com/Tasshack/dreame-vacuum/tree/dev)
@@ -33,15 +30,12 @@ Questo progetto fornisce un package Home Assistant avanzato per controllare il t
 
 ## Funzionalità
 
-* **Controllo vocale interattivo:**
-    * Avvia l'aspirapolvere con comandi vocali semplici ("Alexa, avvia pulizia robottino / Alexa, avvia lavaggio robottino ").
-    * Alexa ti guida nella selezione delle stanze da pulire.
-* **Pulizia personalizzata:**
-    * Specifica una o più stanze da pulire con comandi vocali.
-    * Scegli tra modalità di pulizia: solo aspirazione o aspirazione e lavaggio.
-* **Integrazione con Alexa Actionable Notifications:**
-    * Sfrutta lo script di Keaton Taylor per un'interazione vocale fluida e guidata.
-    
+- **Controllo vocale interattivo:**
+  - Avvia l'aspirapolvere con comandi vocali semplici ("Alexa, avvia pulizia robottino / Alexa, avvia lavaggio robottino ").
+  - Alexa ti guida nella selezione delle stanze da pulire.
+- **Pulizia personalizzata:**
+  - Specifica una o più stanze da pulire tramite comandi vocali, oppure pronuncia 'globale' o 'tutta casa' per avviare la pulizia completa.
+
 ## Installazione
 
 La struttura del pacchetto è organizzata in diverse cartelle. Segui questi passaggi per completare l'installazione.
@@ -60,24 +54,12 @@ Nel caso non sia già presente, la prima operazione da compiere è il caricament
 
 ### 2. Packages
 
-- Copia la cartella "elettrodomestici" e incollala all'interno della directory "packages", se già presente copia al suo interno il file dreame.yaml
+- Copia la cartella "elettrodomestici" e incollala all'interno della directory "packages", se già presente copia al suo interno i file mancanti.
 - Riavvia il sistema.
 
+### 4. Aggiungi l'entità input_boolean ad alexa
 
-### 3. Creazione Card
-
-Per creare la card, segui questi passaggi:
-
-1. Copia il contenuto del file "card.txt".
-2. Vai alla tua dashboard di Home Assistant.
-3. Crea una nuova card manualmente.
-4. Incolla il contenuto copiato nella sezione di configurazione della card.
-
-Ora dovresti visualizzare la card con tutte le informazioni sulla tua dashboard.
-
-### 4. Aggiungi entità input_boolean.robottino ad alexa
-
-- Aggiungi l'entità input_boolean.robottino ad Alexa per renderla disponibile
+- Aggiungi l'entità input_boolean.aspirazione_robottino e input_boolean.lavaggio_robottino ad Alexa per renderla disponibile
 - Segui la procedura in base al metodo di integrazione che usi:
 
   - [Nabu Casa](https://www.nabucasa.com/)
@@ -90,14 +72,17 @@ Se non lo sono, puoi rinominarli dall'app Dreame. Ad esempio, se non ti permette
   - Rinomina temporaneamente la stanza con un altro nome a tua scelta.
   - Successivamente, rinominala di nuovo come Bagno.
 
-  In questo modo, i nomi delle stanze verranno visualizzati correttamente anche in Home Assistant. 
+  In questo modo, i nomi delle stanze verranno visualizzati correttamente anche in Home Assistant.
 
 ## Change Log
- - v 0.2
-   - readmi
-   - ora supporta anche stanze composte da più parole 
- - v 0.3
-   - sostituita notifica push con risposta da alexa
-   - Variato intero pkg per permettere dividere direttamente lavaggio da aspirazione
-   - rimosso file person
-   - gestiti errori stato robot
+
+- **v 0.1**
+  - Readmi
+  - Ora supporta anche stanze composte da più parole.
+- **v 0.2**
+  - Sostituita notifica push con risposta da alexa
+  - Variato intero pkg per permettere dividere direttamente lavaggio da aspirazione.
+- **v 1.0**
+  - Aggiunta la pulizia globale.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M1MI00I)
