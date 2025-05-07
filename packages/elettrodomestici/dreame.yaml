@@ -70,7 +70,8 @@ script:
       - variables:
           entity_vacum: >-
             {% from 'dreame.jinja' import entity_vacum %}
-            {{ entity_vacum() }}
+            {% set entity_vacum = entity_vacum() %}
+            {{ 'vacuum.' ~ entity_vacum }}
           alexa: "{{ states.media_player | selectattr('attributes.last_called', 'eq', true) | map(attribute='entity_id') | select('in', integration_entities('alexa_media')) | first }}"
       - alias: Attiva domanda alexa per stanze
         action: script.activate_alexa_actionable_notification
@@ -109,12 +110,9 @@ script:
               {% set parole_alexa = (wait.trigger.event.data.event_response | lower).split() %}
               {{'tutta casa' in parole_alexa | join(' ') or 'globale' in parole_alexa | join(' ')}}
             then:
-              - action: vaccum.start
+              - action: vacuum.start
                 target:
-                  entity_id: >-
-                    {% from 'dreame.jinja' import entity_vacum %}
-                    {% set entity_vacum = entity_vacum() %}
-                    {{ 'vacuum.' ~ entity_vacum }}
+                  entity_id: "{{ entity_vacum }}" 
               - alias: Invia notifica ad Alexa
                 action: notify.alexa_media
                 data:
