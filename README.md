@@ -1,6 +1,8 @@
 `- Version: 1.0 -`
 
-# Gestione vacum Dreame con alexa multistanze
+# Pulizia per Stanze con Alexa e Robot Dreame
+
+![alt text](image.png)
 
 ## Supportaci
 
